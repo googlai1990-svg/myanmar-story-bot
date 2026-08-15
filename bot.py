@@ -20,7 +20,7 @@ threading.Thread(target=run_web_server, daemon=True).start()
 
 # --- API Keys & Config ---
 TELEGRAM_BOT_TOKEN = "8706964553:AAHbyOVhBoqkoVy9vQWjoLR08YBFuZLQWzI"
-GEMINI_API_KEY = "AQ.Ab8RN6Ix2d72Vzd-7cz0HjBHjhkq9Qw5CwwUJHGhZF3KX-z2JA"
+GEMINI_API_KEY = "AQ.Ab8RN6LGV768ktqECkFvujNoKgH7YuvWhu1iMcufzYoiWFxy7"
 ACTIVE_PASSWORD = "STORY_AUG2026"
 
 verified_users = set()
