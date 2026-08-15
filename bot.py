@@ -1,7 +1,24 @@
 import os
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 import telebot
 import google.generativeai as genai
 
+# --- Render Port Binding (Keep-Alive) ---
+class DummyHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"MyanmarStoryAI Bot is Live!")
+
+def run_web_server():
+    port = int(os.environ.get("PORT", 8080))
+    server = HTTPServer(("0.0.0.0", port), DummyHandler)
+    server.serve_forever()
+
+threading.Thread(target=run_web_server, daemon=True).start()
+
+# --- API Keys & Config ---
 TELEGRAM_BOT_TOKEN = "8706964553:AAHbyOVhBoqkoVy9vQWjoLR08YBFuZLQWzI"
 GEMINI_API_KEY = "AQ.Ab8RN6Ix2d72Vzd-7cz0HjBHjhkq9Qw5CwwUJHGhZF3KX-z2JA"
 ACTIVE_PASSWORD = "STORY_AUG2026"
@@ -33,5 +50,6 @@ def chat_handler(message):
     except Exception as e:
         bot.reply_to(message, "ခေတ္တစောင့်ဆိုင်းပြီး ပြန်လည်ကြိုးစားပေးပါ။")
 
-print("Bot started...")
+print("Bot is running...")
 bot.infinity_polling()
+
