@@ -20,7 +20,7 @@ threading.Thread(target=run_web_server, daemon=True).start()
 
 # --- Config & Keys ---
 TELEGRAM_BOT_TOKEN = "8706964553:AAHbyOVhBoqkoVy9vQWjoLR08YBFuZLQWzI"
-GROQ_API_KEY = "gsk_HUoh3cJJiEOvDkRHZzNWWGdyb3FY0W0T1rkiIO0JdCwDoPrTR0"
+GROQ_API_KEY = "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"
 ACTIVE_PASSWORD = "STORY_AUG2026"
 
 verified_users = set()
