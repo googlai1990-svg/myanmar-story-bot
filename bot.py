@@ -30,7 +30,7 @@ bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
 SYSTEM_PROMPT = """You are MyanmarStoryAI Master Assistant.
 Your mission is to help create continuous, high-quality 3D cinematic animation storylines, character DNA, Midjourney/Flux image prompts, Luma/Kling video camera prompts, and Burmese narration scripts.
-Always maintain context and remember previous story scenes. When the user says 'ဆက်သွား' or asks for the next scene, seamlessly continue from where you left off."""
+Always write natural, grammatically correct Burmese."""
 
 def ask_ai_with_memory(user_id, prompt_text):
     if user_id not in user_conversations:
@@ -40,8 +40,9 @@ def ask_ai_with_memory(user_id, prompt_text):
     
     user_conversations[user_id].append({"role": "user", "content": prompt_text})
     
-    if len(user_conversations[user_id]) > 12:
-        user_conversations[user_id] = [user_conversations[user_id][0]] + user_conversations[user_id][-10:]
+    # 429 Error မတက်စေရန် Memory စာကြောင်းအရေအတွက်ကို ၄ ကြောင်းသာ ကန့်သတ်ထားခြင်း
+    if len(user_conversations[user_id]) > 5:
+        user_conversations[user_id] = [user_conversations[user_id][0]] + user_conversations[user_id][-4:]
 
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
@@ -49,8 +50,10 @@ def ask_ai_with_memory(user_id, prompt_text):
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "llama-3.1-8b-instant",
-        "messages": user_conversations[user_id]
+        "model": "llama-3.3-70b-versatile",
+        "messages": user_conversations[user_id],
+        "max_tokens": 1000,
+        "temperature": 0.7
     }
     
     response = requests.post(url, headers=headers, json=payload, timeout=45)
@@ -95,3 +98,4 @@ def chat_handler(message):
 
 print("Bot is running...")
 bot.infinity_polling()
+
