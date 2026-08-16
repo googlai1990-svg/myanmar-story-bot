@@ -4,7 +4,7 @@ import requests
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import telebot
 
-# --- Render Port Binding (Keep-Alive) ---
+# --- Render Keep-Alive ---
 class DummyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
