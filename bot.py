@@ -20,34 +20,35 @@ threading.Thread(target=run_web_server, daemon=True).start()
 
 # --- Config & Keys ---
 TELEGRAM_BOT_TOKEN = "8706964553:AAHbyOVhBoqkoVy9vQWjoLR08YBFuZLQWzI"
-GEMINI_API_KEY = "AQ.Ab8RN6LGV768ktqECkFvujNoKgH7YuvWhu1iMcufzYoiWFxy7"  # သင်ကူးထားသော AQ. Key အပြည့်အစုံ ထည့်ပါ
+GROQ_API_KEY = "gsk_HUoh3cJJiEOvDkRHZzNWWGdyb3FY0W0T1rkiIO0JdCwDoPrTR0"
 ACTIVE_PASSWORD = "STORY_AUG2026"
 
 verified_users = set()
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
-def ask_gemini(prompt_text):
-    # API Key ပုံစံအလိုက် Header သို့မဟုတ် URL key ဖြင့် အလိုအလျောက် ပို့ဆောင်ပေးသည့် စနစ်
-    if GEMINI_API_KEY.startswith("AQ."):
-        url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {GEMINI_API_KEY}"
-        }
-    else:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-        headers = {"Content-Type": "application/json"}
-
-    payload = {
-        "contents": [{
-            "parts": [{"text": prompt_text}]
-        }]
+def ask_ai(prompt_text):
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
     }
-    
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are MyanmarStoryAI Assistant. You create detailed 3D cinematic animation prompts, character DNA, and Burmese story narration."
+            },
+            {
+                "role": "user",
+                "content": prompt_text
+            }
+        ]
+    }
     response = requests.post(url, headers=headers, json=payload, timeout=45)
     if response.status_code == 200:
         data = response.json()
-        return data["candidates"][0]["content"]["parts"][0]["text"]
+        return data["choices"][0]["message"]["content"]
     else:
         return f"⚠️ API Error ({response.status_code}): {response.text}"
 
@@ -70,11 +71,10 @@ def chat_handler(message):
 
     bot.send_chat_action(message.chat.id, 'typing')
     try:
-        reply = ask_gemini(txt)
+        reply = ask_ai(txt)
         bot.reply_to(message, reply)
     except Exception as e:
         bot.reply_to(message, f"⚠️ Error: {str(e)}")
 
 print("Bot is running...")
 bot.infinity_polling()
-
