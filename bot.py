@@ -25,7 +25,7 @@ ACTIVE_PASSWORD = "STORY_AUG2026"
 
 verified_users = set()
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("models/gemini-1.5-flash")
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
 @bot.message_handler(commands=['start'])
@@ -48,8 +48,7 @@ def chat_handler(message):
         res = model.generate_content(txt)
         bot.reply_to(message, res.text)
     except Exception as e:
-        bot.reply_to(message, "ခေတ္တစောင့်ဆိုင်းပြီး ပြန်လည်ကြိုးစားပေးပါ။")
+        bot.reply_to(message, f"⚠️ Error: {str(e)}")
 
 print("Bot is running...")
 bot.infinity_polling()
-
