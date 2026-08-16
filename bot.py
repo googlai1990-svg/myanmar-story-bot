@@ -4,7 +4,7 @@ import requests
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import telebot
 
-# --- Render Port Binding (Keep-Alive) ---
+# --- Render Web Server (Keep-Alive) ---
 class DummyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -24,7 +24,6 @@ GROQ_API_KEY = "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"
 ACTIVE_PASSWORD = "STORY_AUG2026"
 
 verified_users = set()
-# User တစ်ဦးချင်းစီ၏ စကားပြောမှတ်တမ်း (Memory) သိမ်းဆည်းရန် နေရာ
 user_conversations = {}
 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
@@ -39,10 +38,8 @@ def ask_ai_with_memory(user_id, prompt_text):
             {"role": "system", "content": SYSTEM_PROMPT}
         ]
     
-    # User ရိုက်ပို့သော စာကို Memory ထဲ ထည့်ခြင်း
     user_conversations[user_id].append({"role": "user", "content": prompt_text})
     
-    # Memory အများကြီး မပြည့်သွားစေရန် နောက်ဆုံး စာကြောင်း ၁၀ ကြောင်းသာ ထိန်းသိမ်းခြင်း
     if len(user_conversations[user_id]) > 12:
         user_conversations[user_id] = [user_conversations[user_id][0]] + user_conversations[user_id][-10:]
 
@@ -52,9 +49,7 @@ def ask_ai_with_memory(user_id, prompt_text):
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "model": "llama-3.1-8b-instant"
-
-",
+        "model": "llama-3.1-8b-instant",
         "messages": user_conversations[user_id]
     }
     
@@ -62,7 +57,6 @@ def ask_ai_with_memory(user_id, prompt_text):
     if response.status_code == 200:
         data = response.json()
         bot_reply = data["choices"][0]["message"]["content"]
-        # AI ပြန်ဖြေသော အဖြေကိုလည်း Memory ထဲ ထည့်ခြင်း
         user_conversations[user_id].append({"role": "assistant", "content": bot_reply})
         return bot_reply
     else:
@@ -99,5 +93,5 @@ def chat_handler(message):
     except Exception as e:
         bot.reply_to(message, f"⚠️ Error: {str(e)}")
 
-print("Bot is running with memory...")
+print("Bot is running...")
 bot.infinity_polling()
