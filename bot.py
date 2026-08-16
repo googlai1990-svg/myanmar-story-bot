@@ -52,7 +52,9 @@ def ask_ai_with_memory(user_id, prompt_text):
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "llama-3.3-70b-versatile",
+        "model": "model": "llama-3.1-8b-instant"
+
+",
         "messages": user_conversations[user_id]
     }
     
